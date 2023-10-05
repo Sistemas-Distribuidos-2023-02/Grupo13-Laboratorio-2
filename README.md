@@ -9,23 +9,6 @@
 
 # Instrucciones
 
-Orden sugerido de comandos:
-
-Primero se debe correr el siguiente comando en cualquiera de las máquina (ojalá el número de máquina que sale en el comando):
-
-```
-sudo make docker-vm049
-```
-```
-sudo make docker-vm050
-```
-
-```
-sudo make docker-vm051
-```
-```
-sudo make docker-vm052
-```
 
 
 # Consideraciones
