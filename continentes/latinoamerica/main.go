@@ -20,9 +20,14 @@ const (
 var (
 
     // continentes hablan a oms, establecer vm de oms
-	addr = flag.String("addr", "10.6.46.59:50051", "ip address to connect to")
+	
+    //probar en en vms donde oms, servidor al cual pide requiest, esta en 049
+    //addr = flag.String("addr", "10.6.46.59:50051", "ip address to connect to")
+
+    //probar local
+    addr = flag.String("addr", "localhost:50051", "ip address to connect to")
 	name = flag.String("name", defaultname, "Name to report")
-	surname = flag.String("surname", defaultname, "Surname to report")
+	surname = flag.String("surname", defaultsurname, "Surname to report")
 	condition = flag.String("condition", defaultcondition, "Condition to report")
 )
 

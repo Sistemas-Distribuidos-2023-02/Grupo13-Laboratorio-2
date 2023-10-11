@@ -20,7 +20,7 @@ type server struct {
 }
 
 func (s *server) IdentifyCondition(ctx context.Context, in *pb.SeverityRequest) (*pb.SeverityReply, error) {
-    log.Printf("Received: \n Nombre: %v\n Apellido: %v\nCondicion de %v", in.GetName(), in.GetSurname(), in.GetCondition())
+    log.Printf("Received: \n Nombre: %v\n Apellido: %v\n Condicion de %v", in.GetName(), in.GetSurname(), in.GetCondition())
 
 	// Use fmt.Sprintf to format the string with variables.
 	replyMessage := fmt.Sprintf("Se ha reportado exitosamente que %s %s esta %s", in.GetName(), in.GetSurname(), in.GetCondition())
