@@ -1,10 +1,12 @@
-module github.com/VicenteRuizA/Grupo13-Laboratorio-2/oms
+module github.com/Sistemas-Distribuidos-2023-02/Grupo13-Laboratorio-2
 
-go 1.18
+go 1.21.3
 
 require (
+	github.com/VicenteRuizA/proto v0.1.0
 	github.com/VicenteRuizA/proto_lab2 v0.0.0-20231011155147-131968c3cadc
 	google.golang.org/grpc v1.58.3
+	google.golang.org/protobuf v1.31.0
 )
 
 require (
@@ -13,5 +15,4 @@ require (
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230711160842-782d3b101e98 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
 )
