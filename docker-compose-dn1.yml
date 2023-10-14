@@ -1,0 +1,6 @@
+version: '3'
+services:
+  central:
+    build: ./dn/dn1
+    ports:
+        - "8082:80"
