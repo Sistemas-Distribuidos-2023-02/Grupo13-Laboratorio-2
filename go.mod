@@ -4,7 +4,7 @@ go 1.21.3
 
 require (
 	github.com/VicenteRuizA/proto v0.1.0
-	github.com/VicenteRuizA/proto_lab2 v0.0.0-20231011155147-131968c3cadc
+	github.com/VicenteRuizA/proto_lab2 v0.0.0-20231012153549-cd03e79c723b
 	google.golang.org/grpc v1.58.3
 	google.golang.org/protobuf v1.31.0
 )

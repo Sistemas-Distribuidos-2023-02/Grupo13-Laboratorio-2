@@ -1,7 +1,7 @@
 github.com/VicenteRuizA/proto v0.1.0 h1:EhwI5QaZGwlIKsVO2ddr6eAXawVvDai9cKM4rxN0ZAk=
 github.com/VicenteRuizA/proto v0.1.0/go.mod h1:bZJE73bgiHRR5yjftwP2BUnccAbYH62Cg4oe4NM6n4o=
-github.com/VicenteRuizA/proto_lab2 v0.0.0-20231011155147-131968c3cadc h1:1kJJ+or8MsMsEqAbbxh+eAOUaZSETt+gkLvYEHehctk=
-github.com/VicenteRuizA/proto_lab2 v0.0.0-20231011155147-131968c3cadc/go.mod h1:W6nR/6Fgnql5QafzrP2arn8tFCaGvy/BQ8lmKwUKAs8=
+github.com/VicenteRuizA/proto_lab2 v0.0.0-20231012153549-cd03e79c723b h1:3UVURWSU2d5HWKiR3lRiFe4PJcYEvDu0JyRn2ppQvpk=
+github.com/VicenteRuizA/proto_lab2 v0.0.0-20231012153549-cd03e79c723b/go.mod h1:W6nR/6Fgnql5QafzrP2arn8tFCaGvy/BQ8lmKwUKAs8=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/golang/protobuf v1.5.3 h1:KhyjKVUg7Usr/dYsdSqoFveMYd5ko72D+zANwlG1mmg=
 github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
