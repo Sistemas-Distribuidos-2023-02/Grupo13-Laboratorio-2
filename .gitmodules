@@ -1,0 +1,3 @@
+[submodule "proto_lab2"]
+	path = proto_lab2
+	url = git@github.com:VicenteRuizA/proto_lab2.git
