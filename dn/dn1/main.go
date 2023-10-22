@@ -20,7 +20,7 @@ type saveServer struct {
 }
 
 func (s *saveServer) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
-    log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: de %v", in.Id, in.GetName(), in.GetSurname())
+    log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido:  %v", in.Id, in.GetName(), in.GetSurname())
 
 
 	// Use fmt.Sprintf to format the string with variables.
