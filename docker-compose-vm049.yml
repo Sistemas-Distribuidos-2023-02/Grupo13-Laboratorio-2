@@ -1,0 +1,10 @@
+version: '3'
+services:
+  latinoamerica:
+    build: ./continentes/latinoamerica
+    ports:
+        - "50051:50051"
+  dn2:
+    build: ./dn/dn2
+    ports:
+        - "50051:50051"
