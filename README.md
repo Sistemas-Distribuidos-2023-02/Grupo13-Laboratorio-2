@@ -6,9 +6,11 @@
 | Vicente Ruiz | 202073585-9  | 
 | Gabriel Vergara | 202073616-2 | 
 
-
-# Instrucciones
-
+# Instrucciones 
+VM049: oms y australia
+VM050: onu y europa
+VM051: dn1 y asia
+VM052: dn2 y latinoamerica
 
 
 # Consideraciones

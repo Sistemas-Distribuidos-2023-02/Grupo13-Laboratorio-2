@@ -15,9 +15,6 @@ import (
 )
 // notar que pbs es protocol buffer server, dado que oms es servidor en dicha communicacion
 
-
-// server -------------------------------------------------------------------------------------------
-
 var (
 	port = flag.Int("port", 50051, "Server port")
 )
@@ -29,22 +26,22 @@ type server struct {
 
 func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest) (*pbs.SeverityReply, error) {
     log.Printf("Received: \n Nombre: %v\n Apellido: %v\n Condicion de %v", in.GetName(), in.GetSurname(), in.GetCondition())
-
-
-
     // Generar id aquí?
+    name_id := "1"
+
+    
     // modularizar lo de abajo en una función?
 
-
-    name_id := "1"
-    
-    //probar en en vms donde oms, servidor al cual pide requiest, esta en 049
-    addr :=  "10.6.46.59:50051"
+    // oms es cliente de dn
+    // notar dn1 en vm051
+    // dn2 vm052
+    addr_dn1 :=  "10.6.46.61:50051"
+    //addr_dn2 :=  "10.6.46.62:50051"
 
     //probar en en vms donde oms, servidor al cual pide requiest, esta en 049
     //addr :=  "localhost:50052"
   
-    conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+    conn, err := grpc.Dial(addr_dn1, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil{
 		log.Fatalf("fallo la conexion: %v", err)
 	}

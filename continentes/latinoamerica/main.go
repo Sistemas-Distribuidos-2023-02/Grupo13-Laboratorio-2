@@ -19,9 +19,8 @@ const (
 
 var (
 
-    // continentes hablan a oms, establecer vm de oms
-	
-    //probar en en vms donde oms, servidor al cual pide requiest, esta en 049
+    // latinoamerica envia mensajes a oms
+    // oms se encuentra en vm049
     addr = flag.String("addr", "10.6.46.59:50051", "ip address to connect to")
 
     //probar local
