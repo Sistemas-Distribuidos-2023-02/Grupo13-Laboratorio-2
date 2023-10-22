@@ -12,7 +12,7 @@ import (
 
 
 var (
-	port = flag.Int("port", 50052, "Server port")
+	port = flag.Int("port", 50051, "Server port")
 )
 
 type server struct {

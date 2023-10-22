@@ -39,10 +39,10 @@ func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest)
     name_id := "1"
     
     //probar en en vms donde oms, servidor al cual pide requiest, esta en 049
-    //addr :=  "10.6.46.59:50051"
+    addr :=  "10.6.46.59:50051"
 
     //probar en en vms donde oms, servidor al cual pide requiest, esta en 049
-    addr :=  "localhost:50052"
+    //addr :=  "localhost:50052"
   
     conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil{
