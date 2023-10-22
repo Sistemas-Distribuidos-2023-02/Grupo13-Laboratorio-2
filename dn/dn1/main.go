@@ -7,7 +7,7 @@ import (
 	"log"
     "net"
 	"google.golang.org/grpc"
-    pb "github.com/VicenteRuizA/proto_lab2/in/oms_save_dn"
+    pb "github.com/VicenteRuizA/proto_lab2/dn_service"
 )
 
 
@@ -15,11 +15,11 @@ var (
 	port = flag.Int("port", 50051, "Server port")
 )
 
-type server struct {
+type saveServer struct {
     pb.UnimplementedSaveServer
 }
 
-func (s *server) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
+func (s *saveServer) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
     log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: de %v", in.Id, in.GetName(), in.GetSurname())
 
 
@@ -29,13 +29,13 @@ func (s *server) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveRe
 	return &pb.SaveReply{Message: replyMessage}, nil
 }
 
-func startServer(){
+func startSaveServer(){
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterSaveServer(s, &server{})
+	pb.RegisterSaveServer(s, &saveServer{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
@@ -44,5 +44,5 @@ func startServer(){
 
 func main() {
 	flag.Parse()
-    startServer()
+    startSaveServer()
 }

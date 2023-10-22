@@ -8,7 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	pb "github.com/VicenteRuizA/proto_lab2/in/continente_post_oms"
+	pb "github.com/VicenteRuizA/proto_lab2/oms_service"
 )
 
 const (

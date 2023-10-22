@@ -10,8 +10,9 @@ import (
     //"sync"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-    pbs "github.com/VicenteRuizA/proto_lab2/in/continente_post_oms"
-    pbc "github.com/VicenteRuizA/proto_lab2/in/oms_save_dn"
+    pbs "github.com/VicenteRuizA/proto_lab2/oms_service"
+    pbc "github.com/VicenteRuizA/proto_lab2/dn_service"
+
 )
 // notar que pbs es protocol buffer server, dado que oms es servidor en dicha communicacion
 
