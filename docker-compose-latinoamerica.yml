@@ -3,4 +3,4 @@ services:
   central:
     build: ./continentes/latinoamerica
     ports:
-        - "8082:80"
+        - "50051:50051"
