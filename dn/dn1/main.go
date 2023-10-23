@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"os"
-	"strings"
 
 	pb "github.com/VicenteRuizA/proto_lab2/dn_service"
 	"google.golang.org/grpc"
@@ -39,29 +37,9 @@ func writeToDataFile(id string, nombre string, apellido string) error {
 	return nil
 }
 
-func LeerPrimeraLinea() {
-	file, err := os.Open("DATA.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	if scanner.Scan() {
-		line := scanner.Text()
-		fields := strings.Split(line, "-")
-		if len(fields) == 3 {
-			fmt.Printf("ID: %s, Nombre: %s, Apellido: %s\n", fields[0], fields[1], fields[2])
-		} else {
-			fmt.Println("El formato de la línea no es válido")
-		}
-	}
-}
-
 func (s *saveServer) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
 	log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: %v", in.Id, in.GetName(), in.GetSurname())
 	writeToDataFile(in.Id, in.GetName(), in.GetSurname())
-	LeerPrimeraLinea()
 	// Use fmt.Sprintf to format the string with variables.
 	replyMessage := fmt.Sprintf("Se ha reportado exitosamente ID: %s corresponde a %s %s", in.Id, in.GetName(), in.GetSurname())
 	return &pb.SaveReply{Message: replyMessage}, nil

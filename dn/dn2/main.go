@@ -3,33 +3,51 @@ package main
 import (
 	"context"
 	"flag"
-    "fmt"
+	"fmt"
 	"log"
-    "net"
-	"google.golang.org/grpc"
-    pb "github.com/VicenteRuizA/proto_lab2/dn_service"
-)
+	"net"
+	"os"
 
+	pb "github.com/VicenteRuizA/proto_lab2/dn_service"
+	"google.golang.org/grpc"
+)
 
 var (
 	port = flag.Int("port", 50051, "Server port")
 )
 
 type saveServer struct {
-    pb.UnimplementedSaveServer
+	pb.UnimplementedSaveServer
+}
+
+func writeToDataFile(id string, nombre string, apellido string) error {
+	file, err := os.OpenFile("DATA.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	line := fmt.Sprintf("%s-%s-%s\n", id, nombre, apellido)
+
+	_, err = file.WriteString(line)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *saveServer) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
-    log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: de %v", in.Id, in.GetName(), in.GetSurname())
-
+	log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: de %v", in.Id, in.GetName(), in.GetSurname())
+	writeToDataFile(in.Id, in.GetName(), in.GetSurname())
 
 	// Use fmt.Sprintf to format the string with variables.
-    replyMessage := fmt.Sprintf("Se ha reportado exitosamente ID: %s corresponde a %s %s", in.Id, in.GetName(), in.GetSurname())
+	replyMessage := fmt.Sprintf("Se ha reportado exitosamente ID: %s corresponde a %s %s", in.Id, in.GetName(), in.GetSurname())
 
 	return &pb.SaveReply{Message: replyMessage}, nil
 }
 
-func startSaveServer(){
+func startSaveServer() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -44,5 +62,5 @@ func startSaveServer(){
 
 func main() {
 	flag.Parse()
-    startSaveServer()
+	startSaveServer()
 }
