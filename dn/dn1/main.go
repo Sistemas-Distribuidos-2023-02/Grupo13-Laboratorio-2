@@ -49,7 +49,7 @@ func LeerPrimeraLinea() {
 	scanner := bufio.NewScanner(file)
 	if scanner.Scan() {
 		line := scanner.Text()
-		fields := strings.Split(line, ",")
+		fields := strings.Split(line, "-")
 		if len(fields) == 3 {
 			fmt.Printf("ID: %s, Nombre: %s, Apellido: %s\n", fields[0], fields[1], fields[2])
 		} else {
