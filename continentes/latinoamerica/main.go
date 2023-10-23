@@ -159,7 +159,28 @@ func main() {
 		}
 		log.Printf("Greeting: %s", r.GetMessage())
 	}
+	for {
 
+		name := readNamesFromFile("names.txt", 1)
+		state := "Infectado"
+		if rand.Float32() > 0.55 {
+			state = "Muerto"
+		}
+		log.Printf("Selected name: %s, Estado: %s", name[0], state)
+
+		// Realiza alguna operación con el nombre, por ejemplo, enviarlo al servidor gRPC
+		nombre, apellido, err := separarNombreApellido(name[0])
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		r, err := c.IdentifyCondition(ctx, &pb.SeverityRequest{Name: nombre, Surname: apellido, Condition: state})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Greeting: %s", r.GetMessage())
+		time.Sleep(3 * time.Second) // Espera 3 segundos antes de seleccionar el próximo nombre
+	}
 	// state := "Infectado"
 	// if rand.Float32() > 0.55 {
 	// 	state = "Muerto"
