@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	"strings"
 
 	pb "github.com/VicenteRuizA/proto_lab2/dn_service"
 	"google.golang.org/grpc"
@@ -38,6 +40,26 @@ func writeToDataFile(id string, nombre string, apellido string) error {
 	return nil
 }
 
+func LeerNombreApellido(id_in string) (string, string) {
+
+	file, _ := os.Open("DATA.txt")
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		fields := strings.Split(line, "-")
+		if len(fields) == 3 {
+			if fields[0] == id_in {
+				name := fields[1]
+				surname := fields[2]
+
+				return name, surname
+			}
+		}
+	}
+	return "error", "error"
+}
+
 func (s *server) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
 	log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: %v", in.Id, in.GetName(), in.GetSurname())
 	writeToDataFile(in.Id, in.GetName(), in.GetSurname())
@@ -48,8 +70,8 @@ func (s *server) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveRe
 func (s *server) RequestData(ctx context.Context, in *pb.DataRequest) (*pb.DataReply, error) {
 	log.Printf("Received: \n ID: %v", in.Id)
 
-	nombre := "Hard"
-	apellido := "Coded"
+	nombre, apellido := LeerNombreApellido(in.Id)
+
 	return &pb.DataReply{Nombre: nombre, Apellido: apellido}, nil
 }
 
