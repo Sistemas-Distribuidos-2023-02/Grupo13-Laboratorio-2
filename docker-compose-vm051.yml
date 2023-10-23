@@ -1,10 +1,10 @@
 version: '3'
 services:
-  oms:
-    build: ./oms
+  asia:
+    build: ./continentes/asia
     ports:
         - "50051:50051"
-  australia:
-    build: ./continentes/australia
+  dn1:
+    build: ./dn/dn1
     ports:
         - "50051:50051"
