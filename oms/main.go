@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	//"sync"
@@ -23,6 +25,47 @@ var (
 	port    = flag.Int("port", 50051, "Server port")
 	name_id = 1
 )
+
+type DataRecord struct {
+	ID       string
+	Datanote string
+	Estado   string
+}
+
+func LeerArchivoData(filename string) ([]DataRecord, error) {
+	var records []DataRecord
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		fields := strings.Split(line, "-")
+		if len(fields) == 3 {
+			id := fields[0]
+			datanote := fields[1]
+			estado := fields[2]
+
+			record := DataRecord{
+				ID:       id,
+				Datanote: datanote,
+				Estado:   estado,
+			}
+
+			records = append(records, record)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return records, nil
+}
 
 // escribe la oms en DATA.txt (modificable para los datanodes)
 func writeToDataFile(id int, datanote string, estado string) error {
@@ -61,6 +104,30 @@ func conexionADatanode(name string, condition string, name_id int) string {
 		return "10.6.46.62:50051"
 	}
 	return "error"
+}
+
+func ListadeID(condition string) ([]string, []string) {
+	records, err := LeerArchivoData("DATA.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var idData1 []string
+	var idData2 []string
+
+	for _, record := range records {
+		fmt.Printf("ID: %s, Datanote: %s, Estado: %s\n", record.ID, record.Datanote, record.Estado)
+
+		if record.Estado == condition {
+			switch record.Datanote {
+			case "datanode1":
+				idData1 = append(idData1, record.ID)
+			case "datanode2":
+				idData2 = append(idData2, record.ID)
+			}
+		}
+	}
+	return idData1, idData2
 }
 
 func connectWithRetry(addr string) (*grpc.ClientConn, error) {
@@ -120,37 +187,76 @@ func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest)
 	return &pbs.SeverityReply{Message: replyMessage}, nil
 }
 
-// func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest) (*pbs.ConditionReply, error) {
-// 	log.Printf("Received: Condicion %v", in.GetCondition())
+func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest) (*pbs.ConditionReply, error) {
+	log.Printf("Received: Condicion %v", in.GetCondition())
 
-//     // Cambiar por conexion segun datanode que contenga ids de condicion solicitada
-// 	//addr := conexionADatanode(name, in.GetCondition(), name_id)
+	// Cambiar por conexion segun datanode que contenga ids de condicion solicitada
+	//addr := conexionADatanode(name, in.GetCondition(), name_id)
 
-//     /*
-// 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-// 	if err != nil {
-// 		log.Fatalf("fallo la conexion: %v", err)
-// 	}
-// 	defer conn.Close()
-//     */
-//     conn, err := connectWithRetry(addr)
-// 	if err != nil {
-// 		log.Fatalf("Failed to connect after 5 attempts: %v", err)
-// 	}
-// 	defer conn.Close()
-// 	c := pbc.NewLoadClient(conn)
+	/*
+		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Fatalf("fallo la conexion: %v", err)
+		}
+		defer conn.Close()
+	*/
+	addr1 := "10.6.46.61:50051"
+	addr2 := "10.6.46.62:50051"
+	listaData1, listaData2 := ListadeID(in.GetCondition())
 
-// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-// 	defer cancel()
+	for _, idea := range listaData1 {
+		conn, err := connectWithRetry(addr1)
+		if err != nil {
+			log.Fatalf("Failed to connect after 5 attempts: %v", err)
+		}
+		defer conn.Close()
+		c := pbc.NewLoadClient(conn)
 
-// 	r, err := c.RequestData(ctx, &pbc.DataRequest{Id: strconv.Itoa(name_id)})
-// 	if err != nil {
-// 		log.Fatalf("could not greet: %v", err)
-// 	}
-//     log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
 
-// 	return &pbs.ConditionReply{Nombre: r.Nombre, Apellido: r.Apellido}, nil
-// }
+		r, err := c.RequestData(ctx, &pbc.DataRequest{Id: idea})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+	}
+
+	for _, idea := range listaData2 {
+		conn, err := connectWithRetry(addr2)
+		if err != nil {
+			log.Fatalf("Failed to connect after 5 attempts: %v", err)
+		}
+		defer conn.Close()
+		c := pbc.NewLoadClient(conn)
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		r, err := c.RequestData(ctx, &pbc.DataRequest{Id: idea})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+	}
+	// conn, err := connectWithRetry(addr)
+	// if err != nil {
+	// 	log.Fatalf("Failed to connect after 5 attempts: %v", err)
+	// }
+	// defer conn.Close()
+	// c := pbc.NewLoadClient(conn)
+
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancel()
+
+	// r, err := c.RequestData(ctx, &pbc.DataRequest{Id: strconv.Itoa(name_id)})
+	// if err != nil {
+	// 	log.Fatalf("could not greet: %v", err)
+	// }
+	// log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+
+	return &pbs.ConditionReply{Nombre: r.Nombre, Apellido: r.Apellido}, nil
+}
 
 func startServer() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
