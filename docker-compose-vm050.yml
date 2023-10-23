@@ -2,9 +2,5 @@ version: '3'
 services:
   onu:
     build: ./onu
-    ports:
-        - "50051:50051"
   europa:
     build: ./continentes/europa
-    ports:
-        - "50051:50051"

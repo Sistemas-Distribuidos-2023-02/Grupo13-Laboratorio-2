@@ -2,8 +2,6 @@ version: '3'
 services:
   asia:
     build: ./continentes/asia
-    ports:
-        - "50051:50051"
   dn1:
     build: ./dn/dn1
     ports:
