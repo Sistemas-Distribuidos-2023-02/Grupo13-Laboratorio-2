@@ -130,23 +130,46 @@ func main() {
 		{} en vez de ()
 	*/
 
-	names := readNamesFromFile("names.txt", 1) // Obtén 5 nombres al azar al inicio
+	names := readNamesFromFile("names.txt", 5) // Obtén 5 nombres al azar al inicio
 
-	nombre, apellido, err := separarNombreApellido(names[0])
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	state := "Infectado"
-	if rand.Float32() > 0.55 {
-		state = "Muerto"
-	}
-	log.Printf("Estado: %v", state)
+	// nombre, apellido, err := separarNombreApellido(names[0])
+	// if err != nil {
+	// 	fmt.Println("Error:", err)
+	// 	return
+	// }
+	for _, name := range names {
+		state := "Infectado"
+		if rand.Float32() > 0.55 {
+			state = "Muerto"
+		}
 
-	r, err := c.IdentifyCondition(ctx, &pb.SeverityRequest{Name: nombre, Surname: apellido, Condition: state})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Printf("Nombre: %v", name)
+		log.Printf("Estado: %v", state)
+
+		nombre, apellido, err := separarNombreApellido(name)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		//_, err := client.UploadUser(context.Background(), user)
+		//Cristiano RonaldoInfectado
+		r, err := c.IdentifyCondition(ctx, &pb.SeverityRequest{Name: nombre, Surname: apellido, Condition: state})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Greeting: %s", r.GetMessage())
 	}
-	log.Printf("Greeting: %s", r.GetMessage())
+
+	// state := "Infectado"
+	// if rand.Float32() > 0.55 {
+	// 	state = "Muerto"
+	// }
+	// log.Printf("Estado: %v", state)
+
+	// r, err := c.IdentifyCondition(ctx, &pb.SeverityRequest{Name: nombre, Surname: apellido, Condition: state})
+	// if err != nil {
+	// 	log.Fatalf("could not greet: %v", err)
+	// }
+	// log.Printf("Greeting: %s", r.GetMessage())
 
 }
