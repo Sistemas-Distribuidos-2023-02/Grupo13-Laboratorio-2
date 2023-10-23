@@ -64,27 +64,26 @@ func conexionADatanode(name string, condition string, name_id int) string {
 }
 
 func connectWithRetry(addr string) (*grpc.ClientConn, error) {
-	for i := 0; i < 5; i++ {  // retry up to 5 times
+	for i := 0; i < 5; i++ { // retry up to 5 times
 		// Create a connection to the server
 		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Printf("Failed to connect: %v", err)
-			if i == 4 {  // if this was the fifth attempt, return the error
+			if i == 4 { // if this was the fifth attempt, return the error
 				return nil, err
 			}
 			log.Println("Retrying in 5 seconds...")
-			time.Sleep(5 * time.Second)  // wait for 5 seconds before retrying
+			time.Sleep(5 * time.Second) // wait for 5 seconds before retrying
 		} else {
-			return conn, nil  // if connection succeeded, return the connection
+			return conn, nil // if connection succeeded, return the connection
 		}
 	}
-	return nil, nil  // this line should never be reached, but is required to satisfy the function signature
+	return nil, nil // this line should never be reached, but is required to satisfy the function signature
 }
 
 type server struct {
 	pbs.UnimplementedReportServer
 	pbs.UnimplementedRequestServer
-
 }
 
 func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest) (*pbs.SeverityReply, error) {
@@ -92,14 +91,14 @@ func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest)
 
 	addr := conexionADatanode(in.GetName(), in.GetCondition(), name_id)
 
-    /*
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("fallo la conexion: %v", err)
-	}
-	defer conn.Close()
-    */
-    conn, err := connectWithRetry(addr)
+	/*
+		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Fatalf("fallo la conexion: %v", err)
+		}
+		defer conn.Close()
+	*/
+	conn, err := connectWithRetry(addr)
 	if err != nil {
 		log.Fatalf("Failed to connect after 5 attempts: %v", err)
 	}
@@ -121,38 +120,37 @@ func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest)
 	return &pbs.SeverityReply{Message: replyMessage}, nil
 }
 
+// func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest) (*pbs.ConditionReply, error) {
+// 	log.Printf("Received: Condicion %v", in.GetCondition())
 
-func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest) (*pbs.ConditionReply, error) {
-	log.Printf("Received: Condicion %v", in.GetCondition())
+//     // Cambiar por conexion segun datanode que contenga ids de condicion solicitada
+// 	//addr := conexionADatanode(name, in.GetCondition(), name_id)
 
-    // Cambiar por conexion segun datanode que contenga ids de condicion solicitada
-	//addr := conexionADatanode(name, in.GetCondition(), name_id)
+//     /*
+// 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+// 	if err != nil {
+// 		log.Fatalf("fallo la conexion: %v", err)
+// 	}
+// 	defer conn.Close()
+//     */
+//     conn, err := connectWithRetry(addr)
+// 	if err != nil {
+// 		log.Fatalf("Failed to connect after 5 attempts: %v", err)
+// 	}
+// 	defer conn.Close()
+// 	c := pbc.NewLoadClient(conn)
 
-    /*
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("fallo la conexion: %v", err)
-	}
-	defer conn.Close()
-    */
-    conn, err := connectWithRetry(addr)
-	if err != nil {
-		log.Fatalf("Failed to connect after 5 attempts: %v", err)
-	}
-	defer conn.Close()
-	c := pbc.NewLoadClient(conn)
+// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// 	defer cancel()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+// 	r, err := c.RequestData(ctx, &pbc.DataRequest{Id: strconv.Itoa(name_id)})
+// 	if err != nil {
+// 		log.Fatalf("could not greet: %v", err)
+// 	}
+//     log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
 
-	r, err := c.RequestData(ctx, &pbc.DataRequest{Id: strconv.Itoa(name_id)})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-    log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
-
-	return &pbs.ConditionReply{Nombre: r.Nombre, Apellido: r.Apellido}, nil
-}
+// 	return &pbs.ConditionReply{Nombre: r.Nombre, Apellido: r.Apellido}, nil
+// }
 
 func startServer() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
@@ -161,7 +159,7 @@ func startServer() {
 	}
 	s := grpc.NewServer()
 	pbs.RegisterReportServer(s, &server{})
-    pbs.RegisterRequestServer(s, &server{})
+	pbs.RegisterRequestServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
