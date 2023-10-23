@@ -118,7 +118,7 @@ func main() {
 	c := pb.NewReportClient(conn)
 
 	//aquí se amplio tiempo
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	names := readNamesFromFile("names.txt", 5) // Obtén 5 nombres al azar al inicio
