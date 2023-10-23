@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	//"sync"
+	"sync"
 	pbc "github.com/VicenteRuizA/proto_lab2/dn_service"
 	pbs "github.com/VicenteRuizA/proto_lab2/oms_service"
 	"google.golang.org/grpc"
@@ -24,6 +24,7 @@ import (
 var (
 	port    = flag.Int("port", 50051, "Server port")
 	name_id = 1
+    mu = &sync.Mutex{}
 )
 
 type DataRecord struct {
@@ -155,8 +156,14 @@ type server struct {
 
 func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest) (*pbs.SeverityReply, error) {
 	log.Printf("Received: \n Nombre: %v\n Apellido: %v\n Condicion de %v", in.GetName(), in.GetSurname(), in.GetCondition())
+    
 
-	addr := conexionADatanode(in.GetSurname(), in.GetCondition(), name_id)
+    mu.Lock()
+    current_id := name_id
+	name_id += 1  
+	mu.Unlock()  
+
+	addr := conexionADatanode(in.GetSurname(), in.GetCondition(), current_id)
 
 	/*
 		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -175,14 +182,13 @@ func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	r, err := c.SaveNaming(ctx, &pbc.SaveRequest{Id: strconv.Itoa(name_id), Name: in.GetName(), Surname: in.GetSurname()})
+	r, err := c.SaveNaming(ctx, &pbc.SaveRequest{Id: strconv.Itoa(current_id), Name: in.GetName(), Surname: in.GetSurname()})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
 	log.Printf("Reply from server: %s", r.GetMessage())
 
 	replyMessage := fmt.Sprintf("Se ha reportado exitosamente que %s %s esta %s", in.GetName(), in.GetSurname(), in.GetCondition())
-	name_id += 1
 
 	return &pbs.SeverityReply{Message: replyMessage}, nil
 }
