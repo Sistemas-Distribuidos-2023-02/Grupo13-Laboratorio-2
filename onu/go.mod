@@ -3,7 +3,7 @@ module github.com/Sistemas-Distribuidos-2023-02/Grupo13-Laboratorio-2/onu
 go 1.21.3
 
 require (
-	github.com/VicenteRuizA/proto_lab2 v0.0.0-20231022170818-721d3b3cca3d
+	github.com/VicenteRuizA/proto_lab2 v0.0.0-20231023170941-ebc22ac2c602
 	google.golang.org/grpc v1.59.0
 )
 

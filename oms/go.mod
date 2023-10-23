@@ -3,7 +3,7 @@ module github.com/Sistemas-Distribuidos-2023-02/Grupo13-Laboratorio-2/oms
 go 1.21.3
 
 require (
-	github.com/VicenteRuizA/proto_lab2 v0.0.0-20231023163446-29d58fe604fc
+	github.com/VicenteRuizA/proto_lab2 v0.0.0-20231023170941-ebc22ac2c602
 	google.golang.org/grpc v1.59.0
 )
 
