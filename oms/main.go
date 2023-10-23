@@ -204,7 +204,7 @@ func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest)
 	addr2 := "10.6.46.62:50051"
 	listaData1, listaData2 := ListadeID(in.GetCondition())
 	//var listaONU []string
-	var listaONU []*pbs.Person
+	var listaONU []*pbs.ConditionReply
 
 	//conexion a dn1
 	conn_dn1, err := connectWithRetry(addr1)
@@ -234,8 +234,13 @@ func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest)
 			log.Fatalf("could not greet: %v", err)
 		}
 		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
-		nombreCompleto := fmt.Sprintf("%s:%s", r.Nombre, r.Apellido)
-		listaONU = append(listaONU, nombreCompleto)
+        
+        person := &pbs.Person{
+		    Nombre:   r.Nombre,
+		    Apellido: r.Apellido,
+	    }
+
+		listaONU = append(listaONU, person)
 	}
 
 	for _, idea := range listaData2 {
@@ -245,8 +250,13 @@ func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest)
 		}
 		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
 		//lista a mandar a ONU
-		nombreCompleto := fmt.Sprintf("%s:%s", r.Nombre, r.Apellido)
-		listaONU = append(listaONU, nombreCompleto)
+        
+        person := &pbs.Person{
+		    Nombre:   r.Nombre,
+		    Apellido: r.Apellido,
+	    }
+
+		listaONU = append(listaONU, person)
 
 	}
 	// conn, err := connectWithRetry(addr)
@@ -265,7 +275,7 @@ func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest)
 	// }
 	// log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
 
-	return &pbs.ConditionReply{Persons: persons}, nil
+	return &pbs.ConditionReply{Persons: listaONU}, nil
 }
 
 func startServer() {
