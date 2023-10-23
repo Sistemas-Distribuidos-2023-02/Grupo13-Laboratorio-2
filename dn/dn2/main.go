@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	"strings"
 
 	pb "github.com/VicenteRuizA/proto_lab2/dn_service"
 	"google.golang.org/grpc"
@@ -18,9 +20,8 @@ var (
 
 type server struct {
 	pb.UnimplementedSaveServer
-    pb.UnimplementedLoadServer
+	pb.UnimplementedLoadServer
 }
-
 
 func writeToDataFile(id string, nombre string, apellido string) error {
 	file, err := os.OpenFile("DATA.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
@@ -39,6 +40,26 @@ func writeToDataFile(id string, nombre string, apellido string) error {
 	return nil
 }
 
+func LeerNombreApellido(id_in string) (string, string) {
+
+	file, _ := os.Open("DATA.txt")
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		fields := strings.Split(line, "-")
+		if len(fields) == 3 {
+			if fields[0] == id_in {
+				name := fields[1]
+				surname := fields[2]
+
+				return name, surname
+			}
+		}
+	}
+	return "error", "error"
+}
+
 func (s *server) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
 	log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: %v", in.Id, in.GetName(), in.GetSurname())
 	writeToDataFile(in.Id, in.GetName(), in.GetSurname())
@@ -46,11 +67,11 @@ func (s *server) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveRe
 	return &pb.SaveReply{Message: replyMessage}, nil
 }
 
-func (s *server) RequestData(ctx context.Context, in *pb.DataRequest) (*pb.DataReply, error)  {
+func (s *server) RequestData(ctx context.Context, in *pb.DataRequest) (*pb.DataReply, error) {
 	log.Printf("Received: \n ID: %v", in.Id)
-    nombre := "Hard"
-    apellido := "Coded"
-    return &pb.DataReply{Nombre: nombre, Apellido: apellido}, nil
+
+	nombre, apellido := LeerNombreApellido(in.Id)
+	return &pb.DataReply{Nombre: nombre, Apellido: apellido}, nil
 }
 
 func startServer() {
@@ -59,8 +80,8 @@ func startServer() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterSaveServer(s, &server{})  // register Save service
-	pb.RegisterLoadServer(s, &server{})  // register Load service
+	pb.RegisterSaveServer(s, &server{}) // register Save service
+	pb.RegisterLoadServer(s, &server{}) // register Load service
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
