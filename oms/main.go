@@ -187,96 +187,96 @@ func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest)
 	return &pbs.SeverityReply{Message: replyMessage}, nil
 }
 
-func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest) (*pbs.ConditionReply, error) {
-	log.Printf("Received: Condicion %v", in.GetCondition())
+// func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest) (*pbs.ConditionReply, error) {
+// 	log.Printf("Received: Condicion %v", in.GetCondition())
 
-	// Cambiar por conexion segun datanode que contenga ids de condicion solicitada
-	//addr := conexionADatanode(name, in.GetCondition(), name_id)
+// 	// Cambiar por conexion segun datanode que contenga ids de condicion solicitada
+// 	//addr := conexionADatanode(name, in.GetCondition(), name_id)
 
-	/*
-		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			log.Fatalf("fallo la conexion: %v", err)
-		}
-		defer conn.Close()
-	*/
-	addr1 := "10.6.46.61:50051"
-	addr2 := "10.6.46.62:50051"
-	listaData1, listaData2 := ListadeID(in.GetCondition())
-	//var listaONU []string
-	var listaONU []*pbs.ConditionReply
+// 	/*
+// 		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+// 		if err != nil {
+// 			log.Fatalf("fallo la conexion: %v", err)
+// 		}
+// 		defer conn.Close()
+// 	*/
+// 	addr1 := "10.6.46.61:50051"
+// 	addr2 := "10.6.46.62:50051"
+// 	listaData1, listaData2 := ListadeID(in.GetCondition())
+// 	//var listaONU []string
+// 	var listaONU []*pbs.Person
 
-	//conexion a dn1
-	conn_dn1, err := connectWithRetry(addr1)
-	if err != nil {
-		log.Fatalf("Failed to connect after 5 attempts: %v", err)
-	}
-	defer conn_dn1.Close()
-	c := pbc.NewLoadClient(conn_dn1)
+// 	//conexion a dn1
+// 	conn_dn1, err := connectWithRetry(addr1)
+// 	if err != nil {
+// 		log.Fatalf("Failed to connect after 5 attempts: %v", err)
+// 	}
+// 	defer conn_dn1.Close()
+// 	c := pbc.NewLoadClient(conn_dn1)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// 	defer cancel()
 
-	//conexion a dn2
-	conn_dn2, err := connectWithRetry(addr2)
-	if err != nil {
-		log.Fatalf("Failed to connect after 5 attempts: %v", err)
-	}
-	defer conn_dn2.Close()
-	c2 := pbc.NewLoadClient(conn_dn2)
+// 	//conexion a dn2
+// 	conn_dn2, err := connectWithRetry(addr2)
+// 	if err != nil {
+// 		log.Fatalf("Failed to connect after 5 attempts: %v", err)
+// 	}
+// 	defer conn_dn2.Close()
+// 	c2 := pbc.NewLoadClient(conn_dn2)
 
-	ctx2, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+// 	ctx2, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// 	defer cancel()
 
-	for _, idea := range listaData1 {
-		r, err := c.RequestData(ctx, &pbc.DataRequest{Id: idea})
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-		}
-		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
-        
-        person := &pbs.Person{
-		    Nombre:   r.Nombre,
-		    Apellido: r.Apellido,
-	    }
+// 	for _, idea := range listaData1 {
+// 		r, err := c.RequestData(ctx, &pbc.DataRequest{Id: idea})
+// 		if err != nil {
+// 			log.Fatalf("could not greet: %v", err)
+// 		}
+// 		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
 
-		listaONU = append(listaONU, person)
-	}
+//         person := &pbs.Person{
+// 		    Nombre:   r.Nombre,
+// 		    Apellido: r.Apellido,
+// 	    }
 
-	for _, idea := range listaData2 {
-		r, err := c2.RequestData(ctx2, &pbc.DataRequest{Id: idea})
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-		}
-		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
-		//lista a mandar a ONU
-        
-        person := &pbs.Person{
-		    Nombre:   r.Nombre,
-		    Apellido: r.Apellido,
-	    }
+// 		listaONU = append(listaONU, person)
+// 	}
 
-		listaONU = append(listaONU, person)
+// 	for _, idea := range listaData2 {
+// 		r, err := c2.RequestData(ctx2, &pbc.DataRequest{Id: idea})
+// 		if err != nil {
+// 			log.Fatalf("could not greet: %v", err)
+// 		}
+// 		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+// 		//lista a mandar a ONU
 
-	}
-	// conn, err := connectWithRetry(addr)
-	// if err != nil {
-	// 	log.Fatalf("Failed to connect after 5 attempts: %v", err)
-	// }
-	// defer conn.Close()
-	// c := pbc.NewLoadClient(conn)
+//         person := &pbs.Person{
+// 		    Nombre:   r.Nombre,
+// 		    Apellido: r.Apellido,
+// 	    }
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
+// 		listaONU = append(listaONU, person)
 
-	// r, err := c.RequestData(ctx, &pbc.DataRequest{Id: strconv.Itoa(name_id)})
-	// if err != nil {
-	// 	log.Fatalf("could not greet: %v", err)
-	// }
-	// log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+// 	}
+// 	// conn, err := connectWithRetry(addr)
+// 	// if err != nil {
+// 	// 	log.Fatalf("Failed to connect after 5 attempts: %v", err)
+// 	// }
+// 	// defer conn.Close()
+// 	// c := pbc.NewLoadClient(conn)
 
-	return &pbs.ConditionReply{Persons: listaONU}, nil
-}
+// 	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// 	// defer cancel()
+
+// 	// r, err := c.RequestData(ctx, &pbc.DataRequest{Id: strconv.Itoa(name_id)})
+// 	// if err != nil {
+// 	// 	log.Fatalf("could not greet: %v", err)
+// 	// }
+// 	// log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+
+// 	return &pbs.ConditionReply{Persons: listaONU}, nil
+// }
 
 func startServer() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
