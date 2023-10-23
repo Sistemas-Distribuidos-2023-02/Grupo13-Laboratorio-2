@@ -15,9 +15,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const (
-	defaultcondition = "INFECTADO"
-)
+// const (
+// 	defaultcondition = "INFECTADO"
+// )
 
 var (
 
@@ -27,7 +27,7 @@ var (
 
 	//probar local
 	//addr = flag.String("addr", "localhost:50051", "ip address to connect to")
-	condition = flag.String("condition", defaultcondition, "Condition to request")
+	//condition = flag.String("condition", defaultcondition, "Condition to request")
 )
 
 func connectWithRetry() (*grpc.ClientConn, error) {
