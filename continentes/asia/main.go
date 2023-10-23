@@ -79,21 +79,21 @@ func separarNombreApellido(nombreCompleto string) (nombre, apellido string, err 
 }
 
 func connectWithRetry() (*grpc.ClientConn, error) {
-	for i := 0; i < 5; i++ {  // retry up to 5 times
+	for i := 0; i < 5; i++ { // retry up to 5 times
 		// Create a connection to the server
 		conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Printf("Failed to connect: %v", err)
-			if i == 4 {  // if this was the fifth attempt, return the error
+			if i == 4 { // if this was the fifth attempt, return the error
 				return nil, err
 			}
 			log.Println("Retrying in 5 seconds...")
-			time.Sleep(5 * time.Second)  // wait for 5 seconds before retrying
+			time.Sleep(5 * time.Second) // wait for 5 seconds before retrying
 		} else {
-			return conn, nil  // if connection succeeded, return the connection
+			return conn, nil // if connection succeeded, return the connection
 		}
 	}
-	return nil, nil  // this line should never be reached, but is required to satisfy the function signature
+	return nil, nil // this line should never be reached, but is required to satisfy the function signature
 }
 
 func main() {
@@ -101,22 +101,21 @@ func main() {
 	flag.Parse()
 
 	// Crear connection por el mismo puerto del listener del servidor
-    /*
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("fallo la conexion: %v", err)
-	}
-	defer conn.Close()
-    */
+	/*
+		conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Fatalf("fallo la conexion: %v", err)
+		}
+		defer conn.Close()
+	*/
 
-    conn, err := connectWithRetry()
+	conn, err := connectWithRetry()
 	if err != nil {
 		log.Fatalf("Failed to connect after 5 attempts: %v", err)
 	}
 	defer conn.Close()
 
 	c := pb.NewReportClient(conn)
-
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
@@ -127,6 +126,7 @@ func main() {
 	// 	fmt.Println("Error:", err)
 	// 	return
 	// }
+	time.Sleep(32 * time.Second)
 	for _, name := range names {
 		state := "Infectado"
 		if rand.Float32() > 0.55 {

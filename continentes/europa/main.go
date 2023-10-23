@@ -126,6 +126,8 @@ func main() {
 	// 	fmt.Println("Error:", err)
 	// 	return
 	// }
+
+	time.Sleep(28 * time.Second)
 	for _, name := range names {
 		state := "Infectado"
 		if rand.Float32() > 0.55 {
