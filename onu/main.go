@@ -26,16 +26,40 @@ var (
 	condition = flag.String("condition", defaultcondition, "Condition to request")
 )
 
+func connectWithRetry() (*grpc.ClientConn, error) {
+	for i := 0; i < 5; i++ {  // retry up to 5 times
+		// Create a connection to the server
+		conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Printf("Failed to connect: %v", err)
+			if i == 4 {  // if this was the fifth attempt, return the error
+				return nil, err
+			}
+			log.Println("Retrying in 5 seconds...")
+			time.Sleep(5 * time.Second)  // wait for 5 seconds before retrying
+		} else {
+			return conn, nil  // if connection succeeded, return the connection
+		}
+	}
+	return nil, nil  // this line should never be reached, but is required to satisfy the function signature
+}
 
 func main() {
 	flag.Parse()
 	
+    /*
     conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil{
 		log.Fatalf("fallo la conexion: %v", err)
 	}
 	defer conn.Close()
+    */
 
+    conn, err := connectWithRetry()
+	if err != nil {
+		log.Fatalf("Failed to connect after 5 attempts: %v", err)
+	}
+	defer conn.Close()
     c := pb.NewRequestClient(conn)
 
 

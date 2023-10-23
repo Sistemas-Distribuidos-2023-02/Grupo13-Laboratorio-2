@@ -16,9 +16,11 @@ var (
 	port = flag.Int("port", 50051, "Server port")
 )
 
-type saveServer struct {
+type server struct {
 	pb.UnimplementedSaveServer
+    pb.UnimplementedLoadServer
 }
+
 
 func writeToDataFile(id string, nombre string, apellido string) error {
 	file, err := os.OpenFile("DATA.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
@@ -37,23 +39,28 @@ func writeToDataFile(id string, nombre string, apellido string) error {
 	return nil
 }
 
-func (s *saveServer) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
-	log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: de %v", in.Id, in.GetName(), in.GetSurname())
+func (s *server) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
+	log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: %v", in.Id, in.GetName(), in.GetSurname())
 	writeToDataFile(in.Id, in.GetName(), in.GetSurname())
-
-	// Use fmt.Sprintf to format the string with variables.
 	replyMessage := fmt.Sprintf("Se ha reportado exitosamente ID: %s corresponde a %s %s", in.Id, in.GetName(), in.GetSurname())
-
 	return &pb.SaveReply{Message: replyMessage}, nil
 }
 
-func startSaveServer() {
+func (s *server) RequestData(ctx context.Context, in *pb.DataRequest) (*pb.DataReply, error)  {
+	log.Printf("Received: \n ID: %v", in.Id)
+    nombre := "Hard"
+    apellido := "Coded"
+    return &pb.DataReply{Nombre: nombre, Apellido: apellido}, nil
+}
+
+func startServer() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterSaveServer(s, &saveServer{})
+	pb.RegisterSaveServer(s, &server{})  // register Save service
+	pb.RegisterLoadServer(s, &server{})  // register Load service
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
@@ -62,5 +69,5 @@ func startSaveServer() {
 
 func main() {
 	flag.Parse()
-	startSaveServer()
+	startServer()
 }
