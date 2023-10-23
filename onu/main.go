@@ -65,7 +65,7 @@ func main() {
 
 	// Verifica que la entrada sea válida
 	if condition != "Muerto" && condition != "Infectado" {
-		fmt.Println("Entrada no válida. Debe ingresar 'muerto' o 'infectado'.")
+		fmt.Println("Entrada no válida. Debe ingresar 'Muerto' o 'Infectado'.")
 		return
 	}
 
