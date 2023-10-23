@@ -61,6 +61,7 @@ func LeerPrimeraLinea() {
 func (s *saveServer) SaveNaming(ctx context.Context, in *pb.SaveRequest) (*pb.SaveReply, error) {
 	log.Printf("Received: \n ID: %v\n Nombre: %v\n Apellido: %v", in.Id, in.GetName(), in.GetSurname())
 	writeToDataFile(in.Id, in.GetName(), in.GetSurname())
+	LeerPrimeraLinea()
 	// Use fmt.Sprintf to format the string with variables.
 	replyMessage := fmt.Sprintf("Se ha reportado exitosamente ID: %s corresponde a %s %s", in.Id, in.GetName(), in.GetSurname())
 	return &pb.SaveReply{Message: replyMessage}, nil
