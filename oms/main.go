@@ -89,7 +89,7 @@ type server struct {
 func (s *server) IdentifyCondition(ctx context.Context, in *pbs.SeverityRequest) (*pbs.SeverityReply, error) {
 	log.Printf("Received: \n Nombre: %v\n Apellido: %v\n Condicion de %v", in.GetName(), in.GetSurname(), in.GetCondition())
 
-	addr := conexionADatanode(in.GetName(), in.GetCondition(), name_id)
+	addr := conexionADatanode(in.GetSurname(), in.GetCondition(), name_id)
 
 	/*
 		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
