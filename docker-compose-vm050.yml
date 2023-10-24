@@ -1,6 +1,6 @@
 version: '3'
 services:
-  # onu:
-  #   build: ./onu
+  onu:
+    build: ./onu
   europa:
     build: ./continentes/europa
