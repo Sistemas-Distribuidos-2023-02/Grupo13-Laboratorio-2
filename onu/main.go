@@ -30,6 +30,13 @@ var (
 	//condition = flag.String("condition", defaultcondition, "Condition to request")
 )
 
+func getUserInput() string {
+	fmt.Print("Solicite estado de 'Muerto' o 'Infectado', o escriba 'salir' para salir: ")
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	return scanner.Text()
+}
+
 func connectWithRetry() (*grpc.ClientConn, error) {
 	for i := 0; i < 5; i++ { // retry up to 5 times
 		// Create a connection to the server
@@ -61,41 +68,35 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
 
-	// Canal para comunicarse con la goroutine que maneja la entrada del usuario
-	inputChan := make(chan string)
+	for {
+		condition := getUserInput()
 
-	// Goroutine para manejar la entrada del usuario de forma asíncrona
-	go func() {
-		fmt.Print("Solicite estado de 'Muerto' o 'Infectado': ")
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		input := strings.TrimSpace(scanner.Text())
-		// Enviar la entrada al canal para que la goroutine principal pueda recibirla
-		inputChan <- input
-	}()
+		// Verificar si el usuario quiere salir del programa
+		if strings.ToLower(condition) == "salir" {
+			fmt.Println("Saliendo del programa...")
+			break // Salir del bucle y terminar el programa
+		}
 
-	// Esperar a que se reciba la entrada del canal
-	input := <-inputChan
+		// Verificar la entrada del usuario y continuar con el código principal
+		if condition != "Muerto" && condition != "Infectado" {
+			fmt.Println("Entrada no válida. Debe ingresar 'Muerto' o 'Infectado'.")
+			continue // Volver a solicitar la entrada del usuario
+		}
 
-	// Verifica que la entrada sea válida
-	if input != "Muerto" && input != "Infectado" {
-		fmt.Println("Entrada no válida. Debe ingresar 'Muerto' o 'Infectado'.")
-		return
-	}
+		r, err := c.RequestCondition(ctx, &pb.ConditionRequest{Condition: condition})
+		if err != nil {
+			log.Fatalf("fallo en request: %v", err)
+		}
 
-	r, err := c.RequestCondition(ctx, &pb.ConditionRequest{Condition: input})
-	if err != nil {
-		log.Fatalf("fallo en request: %v", err)
-	}
+		// Acceder a la lista de personas en la respuesta
+		personas := r.GetPersons()
 
-	// Acceder a la lista de personas en la respuesta
-	personas := r.GetPersons()
-
-	// Iterar a través de la lista de personas y hacer algo con ellas
-	for _, persona := range personas {
-		nombre := persona.GetNombre()
-		apellido := persona.GetApellido()
-		// Hacer algo con el nombre y apellido, por ejemplo, imprimirlos
-		fmt.Printf("Nombre: %s, Apellido: %s\n", nombre, apellido)
+		// Iterar a través de la lista de personas y hacer algo con ellas
+		for _, persona := range personas {
+			nombre := persona.GetNombre()
+			apellido := persona.GetApellido()
+			// Hacer algo con el nombre y apellido, por ejemplo, imprimirlos
+			fmt.Printf("Nombre: %s, Apellido: %s\n", nombre, apellido)
+		}
 	}
 }
