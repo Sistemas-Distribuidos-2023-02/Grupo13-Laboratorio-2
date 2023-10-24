@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	pb "github.com/VicenteRuizA/proto_lab2/oms_service"
@@ -48,24 +51,6 @@ func connectWithRetry() (*grpc.ClientConn, error) {
 func main() {
 	flag.Parse()
 
-	/*
-		    conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-			if err != nil{
-				log.Fatalf("fallo la conexion: %v", err)
-			}
-			defer conn.Close()
-	*/
-	// fmt.Print("Solicite estado de 'Muerto' o 'Infectado': ")
-	// scanner := bufio.NewScanner(os.Stdin)
-	// scanner.Scan()
-	// condition := strings.TrimSpace(scanner.Text())
-	condition := "Muerto"
-	// Verifica que la entrada sea válida
-	if condition != "Muerto" && condition != "Infectado" {
-		fmt.Println("Entrada no válida. Debe ingresar 'Muerto' o 'Infectado'.")
-		return
-	}
-
 	conn, err := connectWithRetry()
 	if err != nil {
 		log.Fatalf("Failed to connect after 5 attempts: %v", err)
@@ -76,10 +61,33 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
 
-	r, err := c.RequestCondition(ctx, &pb.ConditionRequest{Condition: condition})
+	// Canal para comunicarse con la goroutine que maneja la entrada del usuario
+	inputChan := make(chan string)
+
+	// Goroutine para manejar la entrada del usuario de forma asíncrona
+	go func() {
+		fmt.Print("Solicite estado de 'Muerto' o 'Infectado': ")
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		input := strings.TrimSpace(scanner.Text())
+		// Enviar la entrada al canal para que la goroutine principal pueda recibirla
+		inputChan <- input
+	}()
+
+	// Esperar a que se reciba la entrada del canal
+	input := <-inputChan
+
+	// Verifica que la entrada sea válida
+	if input != "Muerto" && input != "Infectado" {
+		fmt.Println("Entrada no válida. Debe ingresar 'Muerto' o 'Infectado'.")
+		return
+	}
+
+	r, err := c.RequestCondition(ctx, &pb.ConditionRequest{Condition: input})
 	if err != nil {
 		log.Fatalf("fallo en request: %v", err)
 	}
+
 	// Acceder a la lista de personas en la respuesta
 	personas := r.GetPersons()
 
@@ -90,5 +98,4 @@ func main() {
 		// Hacer algo con el nombre y apellido, por ejemplo, imprimirlos
 		fmt.Printf("Nombre: %s, Apellido: %s\n", nombre, apellido)
 	}
-
 }
