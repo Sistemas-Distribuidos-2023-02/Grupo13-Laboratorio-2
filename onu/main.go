@@ -83,9 +83,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("fallo en request: %v", err)
 	}
-	log.Printf("respuesta: %s %s", r.GetPersons()[0].Nombre, r.GetPersons()[0].Apellido)
+	// Acceder a la lista de personas en la respuesta
+	personas := r.GetPersons()
 
-	// var listaONU []*pbs.Person
-	// listaONU = r.GetPersons()
+	// Iterar a través de la lista de personas y hacer algo con ellas
+	for _, persona := range personas {
+		nombre := persona.GetNombre()
+		apellido := persona.GetApellido()
+		// Hacer algo con el nombre y apellido, por ejemplo, imprimirlos
+		fmt.Printf("Nombre: %s, Apellido: %s\n", nombre, apellido)
+	}
 
 }
