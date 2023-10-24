@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"flag"
 	"fmt"
 	"log"
-	"os"
-	"strings"
 	"time"
 
 	pb "github.com/VicenteRuizA/proto_lab2/oms_service"
@@ -58,11 +55,11 @@ func main() {
 			}
 			defer conn.Close()
 	*/
-	fmt.Print("Solicite estado de 'Muerto' o 'Infectado': ")
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	condition := strings.TrimSpace(scanner.Text())
-
+	// fmt.Print("Solicite estado de 'Muerto' o 'Infectado': ")
+	// scanner := bufio.NewScanner(os.Stdin)
+	// scanner.Scan()
+	// condition := strings.TrimSpace(scanner.Text())
+	condition := "Muerto"
 	// Verifica que la entrada sea válida
 	if condition != "Muerto" && condition != "Infectado" {
 		fmt.Println("Entrada no válida. Debe ingresar 'Muerto' o 'Infectado'.")
