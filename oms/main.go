@@ -233,7 +233,7 @@ func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest)
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
-		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+		//log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
 
 		person := &pbs.Person{
 			Nombre:   r.Nombre,
@@ -248,7 +248,7 @@ func (s *server) RequestCondition(ctx context.Context, in *pbs.ConditionRequest)
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
-		log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
+		//log.Printf("Reply from server: nombre: %s apellido: %s", r.Nombre, r.Apellido)
 		//lista a mandar a ONU
 
 		person := &pbs.Person{

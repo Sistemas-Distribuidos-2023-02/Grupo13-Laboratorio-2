@@ -73,7 +73,7 @@ func main() {
 	defer conn.Close()
 	c := pb.NewRequestClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
 
 	r, err := c.RequestCondition(ctx, &pb.ConditionRequest{Condition: condition})
