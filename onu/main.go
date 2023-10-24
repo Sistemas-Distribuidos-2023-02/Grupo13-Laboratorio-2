@@ -83,6 +83,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("fallo en request: %v", err)
 	}
-	log.Printf("respuesta: %s %s", r.GetNombre(), r.GetApellido())
+	log.Printf("respuesta: %s %s", r.GetPersons()[0].Nombre, r.GetPersons()[0].Apellido)
+
+	// var listaONU []*pbs.Person
+	// listaONU = r.GetPersons()
 
 }
