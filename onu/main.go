@@ -76,7 +76,11 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
 	defer cancel()
 
+    start := time.Now()
 	r, err := c.RequestCondition(ctx, &pb.ConditionRequest{Condition: condition})
+    end := time.Now()
+    elapsed := end.Sub(start)
+    fmt.Printf("tiempo de consutla: %s\n", elapsed)
 	if err != nil {
 		log.Fatalf("fallo en request: %v", err)
 	}
