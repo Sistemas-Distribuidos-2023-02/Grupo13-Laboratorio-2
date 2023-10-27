@@ -79,7 +79,7 @@ func main() {
     start := time.Now()
 	r, err := c.RequestCondition(ctx, &pb.ConditionRequest{Condition: condition})
     end := time.Now()
-    elapsed := end.Sub(start)
+    elapsed := start.Sub(end)
     fmt.Printf("tiempo de consutla: %s\n", elapsed)
 	if err != nil {
 		log.Fatalf("fallo en request: %v", err)
