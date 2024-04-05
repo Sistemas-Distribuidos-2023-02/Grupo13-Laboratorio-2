@@ -1,4 +1,4 @@
-# Grupo13-Laboratorio-1
+# Grupo13-Laboratorio-2
 
 | Nombre Integrante | Rol |
 | ------------ | ------------ | 
